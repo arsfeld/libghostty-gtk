@@ -26,7 +26,7 @@ test(
 )
 
 # The widget tests draw with the cairo renderer, whose output is the same on
-# every machine, and with the fonts.conf monospace package.nix provides. The
+# every machine, and with the one monospace font the packaging pins through FONTCONFIG_FILE. The
 # sandbox has no session bus, so accessibility and portals, which want one,
 # are off. Every terminal reads the clipboard-read key, so they all use a
 # memory GSettings backend (the sandbox has no writable home), in which
