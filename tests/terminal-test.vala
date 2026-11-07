@@ -1,4 +1,4 @@
-// Gvt.Terminal in a presented window, against real children. Compiled with
+// GhosttyGtk.Terminal in a presented window, against real children. Compiled with
 // the library sources, so the tests can reach the internal engine and
 // renderer.
 
@@ -6,7 +6,7 @@ class Exits : Object {
     public int count = 0;
     public int status = 0;
 
-    public Exits (Gvt.Terminal t) {
+    public Exits (GhosttyGtk.Terminal t) {
         t.child_exited.connect ((s) => {
             count++;
             status = s;
@@ -29,10 +29,10 @@ static void test_spawn () {
     assert_cmpint (Process.exit_status (exits.status), CompareOperator.EQ, 3);
 
     size_t len;
-    var text = t.get_text_range_format (Gvt.Format.TEXT, 0, 0, 0, 2, out len);
+    var text = t.get_text_range_format (GhosttyGtk.Format.TEXT, 0, 0, 0, 2, out len);
     assert_cmpstr (text, CompareOperator.EQ, "hi");
     assert_cmpuint ((uint) len, CompareOperator.EQ, 2);
-    assert_null (t.get_text_range_format (Gvt.Format.HTML, 0, 0, 0, 2, out len));
+    assert_null (t.get_text_range_format (GhosttyGtk.Format.HTML, 0, 0, 0, 2, out len));
     window.destroy ();
 }
 
@@ -41,7 +41,7 @@ static void test_exec_error () {
     var window = TestUtil.present (t);
     Error? failure = null;
     bool done = false;
-    t.spawn_async (Gvt.PtyFlags.DEFAULT, null, { "/nonexistent" }, null, 0, null, -1, null,
+    t.spawn_async (GhosttyGtk.PtyFlags.DEFAULT, null, { "/nonexistent" }, null, 0, null, -1, null,
                    (term, pid, error) => {
         failure = error;
         done = true;
@@ -159,9 +159,9 @@ static void test_engine_failed_drops_pty () {
     assert_true (t.get_pty () == null);
 
     int master, slave;
-    assert_cmpint (GvtPosix.openpty (out master, out slave, null, null, null), CompareOperator.EQ, 0);
-    var size = GvtPosix.WinSize () { ws_row = 3, ws_col = 7 };
-    GvtPosix.ioctl_winsize (master, GvtPosix.TIOCSWINSZ, ref size);
+    assert_cmpint (GhosttyGtkPosix.openpty (out master, out slave, null, null, null), CompareOperator.EQ, 0);
+    var size = GhosttyGtkPosix.WinSize () { ws_row = 3, ws_col = 7 };
+    GhosttyGtkPosix.ioctl_winsize (master, GhosttyGtkPosix.TIOCSWINSZ, ref size);
     if (master != old_fd) {
         assert_cmpint (Posix.dup2 (master, old_fd), CompareOperator.EQ, old_fd);
         Posix.close (master);
@@ -179,8 +179,8 @@ static void test_engine_failed_drops_pty () {
     var n = Posix.read (slave, buf, buf.length);
     assert_cmpint ((int) n, CompareOperator.EQ, -1);
     assert_cmpint (Posix.errno, CompareOperator.EQ, Posix.EAGAIN);
-    var now = GvtPosix.WinSize ();
-    GvtPosix.ioctl_winsize (slave, GvtPosix.TIOCGWINSZ, ref now);
+    var now = GhosttyGtkPosix.WinSize ();
+    GhosttyGtkPosix.ioctl_winsize (slave, GhosttyGtkPosix.TIOCGWINSZ, ref now);
     assert_cmpuint (now.ws_col, CompareOperator.EQ, 7);
     assert_cmpuint (now.ws_row, CompareOperator.EQ, 3);
 
@@ -256,7 +256,7 @@ static void test_rows_survive_pruning () {
     assert_true (pruned);
 
     size_t len;
-    assert_cmpstr (t.get_text_range_format (Gvt.Format.TEXT, marker_row, 0, marker_row + 1, 0, out len),
+    assert_cmpstr (t.get_text_range_format (GhosttyGtk.Format.TEXT, marker_row, 0, marker_row + 1, 0, out len),
                    CompareOperator.EQ, "MARKER");
     // The scrollbar counts in the same rows: at the bottom, its value is
     // the row at the top of the screen, and the pruned rows are below lower.

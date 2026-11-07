@@ -5,7 +5,7 @@
 class Sent : Object {
     public ByteArray bytes = new ByteArray ();
 
-    public Sent (Gvt.Input input) {
+    public Sent (GhosttyGtk.Input input) {
         input.sent.connect ((b) => bytes.append (b));
     }
 
@@ -39,7 +39,7 @@ class TestIM : Gtk.IMContext {
 
 /* GtkIMContextSimple after a dead key, on a key it does not compose with:
  * commits the spacing accent and lets the key itself through. */
-class DeadKeyIM : Gtk.IMContext, Gvt.KeyFilter {
+class DeadKeyIM : Gtk.IMContext, GhosttyGtk.KeyFilter {
     public int filtered = 0;
 
     public override bool filter_keypress (Gdk.Event event) {
@@ -48,7 +48,7 @@ class DeadKeyIM : Gtk.IMContext, Gvt.KeyFilter {
         return false;
     }
 
-    /* The same, for a key given by its fields (see Gvt.KeyFilter). */
+    /* The same, for a key given by its fields (see GhosttyGtk.KeyFilter). */
     public bool filter_key_fields (uint keyval, uint keycode, Gdk.ModifierType state) {
         filtered++;
         commit ("´");
@@ -60,7 +60,7 @@ static string esc (string s) {
     return "\x1b" + s;
 }
 
-static Gvt.Terminal terminal () {
+static GhosttyGtk.Terminal terminal () {
     return TestUtil.new_terminal ();
 }
 
@@ -237,11 +237,11 @@ static void test_focus () {
 }
 
 static void test_keymap () {
-    assert_true (Gvt.Keymap.from_evdev (30) == GhosttyVt.Key.A);
-    assert_true (Gvt.Keymap.from_evdev (1) == GhosttyVt.Key.ESCAPE);
-    assert_true (Gvt.Keymap.from_evdev (103) == GhosttyVt.Key.ARROW_UP);
-    assert_true (Gvt.Keymap.from_evdev (0) == GhosttyVt.Key.UNIDENTIFIED);
-    assert_true (Gvt.Keymap.from_evdev (100000) == GhosttyVt.Key.UNIDENTIFIED);
+    assert_true (GhosttyGtk.Keymap.from_evdev (30) == GhosttyVt.Key.A);
+    assert_true (GhosttyGtk.Keymap.from_evdev (1) == GhosttyVt.Key.ESCAPE);
+    assert_true (GhosttyGtk.Keymap.from_evdev (103) == GhosttyVt.Key.ARROW_UP);
+    assert_true (GhosttyGtk.Keymap.from_evdev (0) == GhosttyVt.Key.UNIDENTIFIED);
+    assert_true (GhosttyGtk.Keymap.from_evdev (100000) == GhosttyVt.Key.UNIDENTIFIED);
 }
 
 /* A touchpad (pixel) scroll moves the view by the rows it covers. The
@@ -274,7 +274,7 @@ static void test_shift_bypasses_tracking () {
     var t = terminal ();
     var window = TestUtil.present (t);
     var sent = new Sent (t.input);
-    var phases = new GenericArray<Gvt.PointerPhase> ();
+    var phases = new GenericArray<GhosttyGtk.PointerPhase> ();
     t.input.selection_event.connect ((phase) => phases.add (phase));
     t.process_output (esc ("[?1000h").data);
     t.process_output (esc ("[?1006h").data);
@@ -288,9 +288,9 @@ static void test_shift_bypasses_tracking () {
                     shift | Gdk.ModifierType.BUTTON1_MASK, 1);
     assert_cmpuint (sent.bytes.len, CompareOperator.EQ, 0);
     assert_cmpint (phases.length, CompareOperator.EQ, 3);
-    assert_true (phases[0] == Gvt.PointerPhase.PRESS);
-    assert_true (phases[1] == Gvt.PointerPhase.DRAG);
-    assert_true (phases[2] == Gvt.PointerPhase.RELEASE);
+    assert_true (phases[0] == GhosttyGtk.PointerPhase.PRESS);
+    assert_true (phases[1] == GhosttyGtk.PointerPhase.DRAG);
+    assert_true (phases[2] == GhosttyGtk.PointerPhase.RELEASE);
     assert_true (t.get_has_selection ());
 
     // Without Shift the program still gets the click.
@@ -300,7 +300,7 @@ static void test_shift_bypasses_tracking () {
 }
 
 /* A press whose release never arrives (elementary's right-click handler
- * claims the sequence and opens a popover, which cancels gvt's gestures)
+ * claims the sequence and opens a popover, which cancels libghostty-gtk's gestures)
  * does not leave the button held: the next click is routed afresh. */
 static void test_cancelled_press () {
     var t = terminal ();

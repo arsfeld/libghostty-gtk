@@ -1,9 +1,9 @@
-project('gvt', 'vala', 'c', version: '0.1.0', meson_version: '>= 1.0')
+project('libghostty-gtk', 'vala', 'c', version: '0.1.0', meson_version: '>= 1.0')
 
 api_version = '1'
-gvt_name = 'gvt-' + api_version
+ghostty_gtk_name = 'ghostty-gtk-' + api_version
 
-add_project_arguments('-DG_LOG_DOMAIN="Gvt"', language: 'c')
+add_project_arguments('-DG_LOG_DOMAIN="GhosttyGtk"', language: 'c')
 
 vapi_dir = meson.current_source_dir() / 'vapi'
 add_project_arguments(['--vapidir', vapi_dir, '--pkg', 'posix'], language: 'vala')
@@ -20,10 +20,10 @@ ghostty_dep = dependency('libghostty-vt')
 # Math.round () and friends.
 m_dep = meson.get_compiler('c').find_library('m', required: false)
 
-gvt_deps = [glib_dep, gobject_dep, gio_dep, gtk_dep, pango_dep, ghostty_dep, m_dep]
+ghostty_gtk_deps = [glib_dep, gobject_dep, gio_dep, gtk_dep, pango_dep, ghostty_dep, m_dep]
 
 # Engine is the only file that may call the libghostty C API.
-gvt_sources = files(
+ghostty_gtk_sources = files(
   'src/Clipboard.vala',
   'src/Engine.vala',
   'src/Enums.vala',
@@ -38,25 +38,25 @@ gvt_sources = files(
   'vapi/posix-extra.vapi',
 )
 
-gvt_lib = library(
-  gvt_name,
-  gvt_sources,
-  dependencies: gvt_deps,
-  vala_vapi: gvt_name + '.vapi',
-  vala_header: 'gvt.h',
+ghostty_gtk_lib = library(
+  ghostty_gtk_name,
+  ghostty_gtk_sources,
+  dependencies: ghostty_gtk_deps,
+  vala_vapi: ghostty_gtk_name + '.vapi',
+  vala_header: 'ghostty-gtk.h',
   version: meson.project_version(),
   install: true,
-  install_dir: [true, get_option('includedir') / gvt_name, true],
+  install_dir: [true, get_option('includedir') / ghostty_gtk_name, true],
 )
 
-# Vala packages a consumer of gvt-1.vapi needs.
-install_data('gvt-1.deps', install_dir: get_option('datadir') / 'vala' / 'vapi')
+# Vala packages a consumer of ghostty-gtk-1.vapi needs.
+install_data('ghostty-gtk-1.deps', install_dir: get_option('datadir') / 'vala' / 'vapi')
 
 import('pkgconfig').generate(
-  gvt_lib,
-  name: gvt_name,
+  ghostty_gtk_lib,
+  name: ghostty_gtk_name,
   description: 'GTK4 terminal widget on libghostty-vt',
-  subdirs: gvt_name,
+  subdirs: ghostty_gtk_name,
   requires: ['glib-2.0', 'gobject-2.0', 'gio-2.0', 'gtk4', 'pango'],
   requires_private: ['libghostty-vt'],
 )

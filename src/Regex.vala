@@ -7,7 +7,7 @@
  * ignored; a match pattern is a GLib.Regex compiled with MULTILINE, whatever
  * the flags say.
  */
-namespace Gvt {
+namespace GhosttyGtk {
     public class Regex : Object {
         /* The literal needle of a search pattern; null for a match pattern. */
         internal string? literal = null;

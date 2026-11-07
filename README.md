@@ -1,12 +1,12 @@
-# gvt
+# libghostty-gtk
 
 A GTK4 terminal widget on [libghostty-vt](https://lib.ghostty.org/), Ghostty's
 terminal engine, with the part of VTE's `Vte.Terminal` API that elementary
-Terminal uses, under the namespace `Gvt`. Porting an app off VTE is then mostly
-a rename; see the `gvt` branch of
+Terminal uses, under the namespace `GhosttyGtk`. Porting an app off VTE is then mostly
+a rename; see the `libghostty-gtk` branch of
 [arsfeld/elementary-terminal](https://github.com/arsfeld/elementary-terminal).
 
-gvt draws with GtkSnapshot and does its own PTY, input (keyboard, IME, mouse,
+libghostty-gtk draws with GtkSnapshot and does its own PTY, input (keyboard, IME, mouse,
 paste), selection, OSC 52 clipboard, search and URL matching. libghostty-vt
 provides parsing and terminal state only.
 
@@ -21,8 +21,8 @@ meson compile -C build
 meson test -C build   # widget tests need a Wayland display, e.g. weston --backend=headless
 ```
 
-It installs the library `gvt-1`, its VAPI and the GSettings schema
-`io.github.arsfeld.gvt`.
+It installs the library `ghostty-gtk-1`, its VAPI and the GSettings schema
+`io.github.arsfeld.ghostty-gtk`.
 
 ## Status
 

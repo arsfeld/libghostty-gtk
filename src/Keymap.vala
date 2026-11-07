@@ -8,7 +8,7 @@
  * they come out UNIDENTIFIED exactly as in Ghostty; the encoder then works
  * from the key's text. A GDK hardware keycode on Linux is the evdev code + 8.
  */
-namespace Gvt {
+namespace GhosttyGtk {
     internal class Keymap {
         public static GhosttyVt.Key from_gdk (uint keycode) {
             return keycode < 8 ? GhosttyVt.Key.UNIDENTIFIED : from_evdev (keycode - 8);

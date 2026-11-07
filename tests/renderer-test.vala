@@ -1,4 +1,4 @@
-// Renders a presented Gvt.Terminal to a texture and samples pixels at cell
+// Renders a presented GhosttyGtk.Terminal to a texture and samples pixels at cell
 // centres. No golden images: only sizes and colours that do not depend on
 // how the font draws.
 
@@ -7,7 +7,7 @@ class Pixels {
     public int height;
     private uint8[] data;
 
-    public Pixels (Gvt.Terminal t) {
+    public Pixels (GhosttyGtk.Terminal t) {
         var paintable = new Gtk.WidgetPaintable (t);
         var snapshot = new Gtk.Snapshot ();
         paintable.snapshot (snapshot, t.get_width (), t.get_height ());
@@ -27,14 +27,14 @@ class Pixels {
     }
 
     /* The colour at the centre of cell (col, row). */
-    public uint32 cell_centre (Gvt.Terminal t, int col, int row) {
+    public uint32 cell_centre (GhosttyGtk.Terminal t, int col, int row) {
         var w = (int) t.get_char_width ();
         var h = (int) t.get_char_height ();
         return at (col * w + w / 2, row * h + h / 2);
     }
 
     /* The rightmost x in text row `row` whose pixel matches `pred`, or -1. */
-    public int rightmost (Gvt.Terminal t, int row, PixelPredicate pred) {
+    public int rightmost (GhosttyGtk.Terminal t, int row, PixelPredicate pred) {
         var h = (int) t.get_char_height ();
         for (var x = width - 1; x >= 0; x--) {
             for (var y = row * h; y < (row + 1) * h; y++) {
@@ -47,12 +47,12 @@ class Pixels {
     }
 
     /* Whether any pixel inside cell (col, row) is close to pure red. */
-    public bool cell_has_red (Gvt.Terminal t, int col, int row) {
+    public bool cell_has_red (GhosttyGtk.Terminal t, int col, int row) {
         return cell_has (t, col, row, is_red);
     }
 
     /* Whether any pixel inside cell (col, row) matches `pred`. */
-    public bool cell_has (Gvt.Terminal t, int col, int row, PixelPredicate pred) {
+    public bool cell_has (GhosttyGtk.Terminal t, int col, int row, PixelPredicate pred) {
         var w = (int) t.get_char_width ();
         var h = (int) t.get_char_height ();
         for (var y = row * h; y < (row + 1) * h; y++) {
@@ -89,7 +89,7 @@ static Gdk.RGBA rgba (string spec) {
 }
 
 /* white on black; palette 1 is pure red, 7 grey, the rest black. */
-static void set_test_colors (Gvt.Terminal t) {
+static void set_test_colors (GhosttyGtk.Terminal t) {
     var palette = new Gdk.RGBA[16];
     for (var i = 0; i < 16; i++) {
         palette[i] = rgba ("#000000");

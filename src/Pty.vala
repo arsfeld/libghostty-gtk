@@ -8,7 +8,7 @@
  *
  * This file does not touch libghostty.
  */
-namespace Gvt {
+namespace GhosttyGtk {
     public class Pty : Object {
         private const size_t READ_CAP = 65536;
         /* How long `exited` waits for EOF once the child is gone. */
@@ -82,7 +82,7 @@ namespace Gvt {
             }
 
             int master, slave;
-            if (GvtPosix.openpty (out master, out slave, null, null, null) != 0) {
+            if (GhosttyGtkPosix.openpty (out master, out slave, null, null, null) != 0) {
                 throw new SpawnError.FAILED ("openpty: %s", Posix.strerror (Posix.errno));
             }
             Posix.fcntl (master, Posix.F_SETFD, Posix.FD_CLOEXEC);
@@ -92,7 +92,7 @@ namespace Gvt {
              * write end closes on a successful exec, so a read of zero bytes
              * means the program started. */
             int[] report = new int[2];
-            if (GvtPosix.pipe2 (report, Posix.O_CLOEXEC) != 0) {
+            if (GhosttyGtkPosix.pipe2 (report, Posix.O_CLOEXEC) != 0) {
                 var err = Posix.errno;
                 Posix.close (master);
                 Posix.close (slave);
@@ -122,7 +122,7 @@ namespace Gvt {
 
             if (child == 0) {
                 Posix.setsid ();
-                GvtPosix.ioctl_int (slave, GvtPosix.TIOCSCTTY, 0);
+                GhosttyGtkPosix.ioctl_int (slave, GhosttyGtkPosix.TIOCSCTTY, 0);
                 Posix.dup2 (slave, 0);
                 Posix.dup2 (slave, 1);
                 Posix.dup2 (slave, 2);
@@ -130,15 +130,15 @@ namespace Gvt {
                  * copies reach the program; every other descriptor the
                  * parent had open is made so too (VTE closes them). Marking
                  * rather than closing keeps the report pipe working. */
-                if (GvtPosix.close_range (3, uint.MAX, (int) GvtPosix.CLOSE_RANGE_CLOEXEC) != 0) {
+                if (GhosttyGtkPosix.close_range (3, uint.MAX, (int) GhosttyGtkPosix.CLOSE_RANGE_CLOEXEC) != 0) {
                     for (var fd = 3; fd < max_fd; fd++) {
                         Posix.fcntl (fd, Posix.F_SETFD, Posix.FD_CLOEXEC);
                     }
                 }
                 /* The program starts with no signal blocked or ignored,
                  * whatever the parent's threads had set up. */
-                for (var sig = 1; sig < GvtPosix.NSIG; sig++) {
-                    GvtPosix.signal (sig, GvtPosix.SIG_DFL);
+                for (var sig = 1; sig < GhosttyGtkPosix.NSIG; sig++) {
+                    GhosttyGtkPosix.signal (sig, GhosttyGtkPosix.SIG_DFL);
                 }
                 Posix.sigprocmask (Posix.SIG_SETMASK, no_signals, out unused_mask);
                 if (cwd != null && Posix.chdir (cwd) != 0) {
@@ -148,9 +148,9 @@ namespace Gvt {
                     setup ();
                 }
                 if (search) {
-                    GvtPosix.execvpe (file, args, envp);
+                    GhosttyGtkPosix.execvpe (file, args, envp);
                 } else {
-                    GvtPosix.execve (file, args, envp);
+                    GhosttyGtkPosix.execve (file, args, envp);
                 }
                 child_fail (report[1]);
             }
@@ -349,10 +349,10 @@ namespace Gvt {
             if (closed) {
                 return;
             }
-            var ws = GvtPosix.WinSize () {
+            var ws = GhosttyGtkPosix.WinSize () {
                 ws_row = rows, ws_col = cols, ws_xpixel = px_w, ws_ypixel = px_h
             };
-            GvtPosix.ioctl_winsize (fd, GvtPosix.TIOCSWINSZ, ref ws);
+            GhosttyGtkPosix.ioctl_winsize (fd, GhosttyGtkPosix.TIOCSWINSZ, ref ws);
         }
     }
 }

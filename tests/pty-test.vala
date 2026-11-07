@@ -8,13 +8,13 @@ class Run : Object {
     public bool exited_seen = false;
     public int status = -1;
     public size_t bytes_at_exit = 0;
-    public Gvt.Pty pty;
+    public GhosttyGtk.Pty pty;
     public MainLoop loop = new MainLoop ();
 
     public Pid pid;
 
     public Run (string[] argv, string[]? envv = null) throws Error {
-        pty = Gvt.Pty.spawn (null, argv, envv, SpawnFlags.SEARCH_PATH, null, out pid);
+        pty = GhosttyGtk.Pty.spawn (null, argv, envv, SpawnFlags.SEARCH_PATH, null, out pid);
         pty.data.connect ((chunk) => {
             output.append (chunk);
             chunks++;
@@ -88,7 +88,7 @@ static void test_output_then_exit () {
 static void test_resize () {
     try {
         Pid pid;
-        var pty = Gvt.Pty.spawn (null, { "sh", "-c", "sleep 0.2; stty size" }, null,
+        var pty = GhosttyGtk.Pty.spawn (null, { "sh", "-c", "sleep 0.2; stty size" }, null,
                                  SpawnFlags.SEARCH_PATH, null, out pid);
         pty.set_size (42, 7, 0, 0);
         var out_text = new StringBuilder ();
@@ -131,7 +131,7 @@ static void test_exec_fail () {
     bool threw = false;
     try {
         Pid pid;
-        Gvt.Pty.spawn (null, { "/nonexistent" }, null, 0, null, out pid);
+        GhosttyGtk.Pty.spawn (null, { "/nonexistent" }, null, 0, null, out pid);
     } catch (Error e) {
         threw = e is SpawnError;
     }
@@ -143,14 +143,14 @@ static void test_exec_fail () {
 static void test_closed_is_inert () {
     try {
         Pid pid;
-        var pty = Gvt.Pty.spawn (null, { "sleep", "100" }, null, SpawnFlags.SEARCH_PATH, null, out pid);
+        var pty = GhosttyGtk.Pty.spawn (null, { "sleep", "100" }, null, SpawnFlags.SEARCH_PATH, null, out pid);
         var old_fd = pty.fd;
         pty.close ();
 
         int master, slave;
-        assert_cmpint (GvtPosix.openpty (out master, out slave, null, null, null), CompareOperator.EQ, 0);
-        var size = GvtPosix.WinSize () { ws_row = 3, ws_col = 7 };
-        GvtPosix.ioctl_winsize (master, GvtPosix.TIOCSWINSZ, ref size);
+        assert_cmpint (GhosttyGtkPosix.openpty (out master, out slave, null, null, null), CompareOperator.EQ, 0);
+        var size = GhosttyGtkPosix.WinSize () { ws_row = 3, ws_col = 7 };
+        GhosttyGtkPosix.ioctl_winsize (master, GhosttyGtkPosix.TIOCSWINSZ, ref size);
         if (master != old_fd) {
             assert_cmpint (Posix.dup2 (master, old_fd), CompareOperator.EQ, old_fd);
             Posix.close (master);
@@ -163,8 +163,8 @@ static void test_closed_is_inert () {
         var buf = new uint8[64];
         assert_cmpint ((int) Posix.read (slave, buf, buf.length), CompareOperator.EQ, -1);
         assert_cmpint (Posix.errno, CompareOperator.EQ, Posix.EAGAIN);
-        var now = GvtPosix.WinSize ();
-        GvtPosix.ioctl_winsize (slave, GvtPosix.TIOCGWINSZ, ref now);
+        var now = GhosttyGtkPosix.WinSize ();
+        GhosttyGtkPosix.ioctl_winsize (slave, GhosttyGtkPosix.TIOCGWINSZ, ref now);
         assert_cmpuint (now.ws_col, CompareOperator.EQ, 7);
         assert_cmpuint (now.ws_row, CompareOperator.EQ, 3);
         Posix.close (old_fd);
@@ -177,7 +177,7 @@ static void test_closed_is_inert () {
 static void test_close () {
     try {
         Pid pid;
-        var pty = Gvt.Pty.spawn (null, { "sleep", "100" }, null, SpawnFlags.SEARCH_PATH, null, out pid);
+        var pty = GhosttyGtk.Pty.spawn (null, { "sleep", "100" }, null, SpawnFlags.SEARCH_PATH, null, out pid);
         var fired = false;
         pty.exited.connect (() => fired = true);
         pty.close ();
@@ -228,9 +228,9 @@ static void test_runtime_argv () {
  * DBUS_SESSION_BUS_ADDRESS and the rest. */
 static void test_env_merged () {
     try {
-        Environment.set_variable ("GVT_INHERITED", "parent", true);
-        var run = new Run ({ "sh", "-c", "printf '%s/%s/%s' \"$GVT_INHERITED\" \"$GVT_EXTRA\" \"$TERM\"" },
-                           { "GVT_EXTRA=extra" });
+        Environment.set_variable ("GHOSTTY_GTK_INHERITED", "parent", true);
+        var run = new Run ({ "sh", "-c", "printf '%s/%s/%s' \"$GHOSTTY_GTK_INHERITED\" \"$GHOSTTY_GTK_EXTRA\" \"$TERM\"" },
+                           { "GHOSTTY_GTK_EXTRA=extra" });
         run.wait_for_exit ();
         assert_cmpstr (run.text, CompareOperator.EQ, "parent/extra/xterm-256color");
     } catch (Error e) {
@@ -266,7 +266,7 @@ static void test_child_clean_slate () {
         Posix.sigemptyset (out block);
         Posix.sigaddset (ref block, Posix.Signal.USR1);
         Posix.sigprocmask (Posix.SIG_BLOCK, block, out old);
-        var old_usr2 = GvtPosix.signal (Posix.Signal.USR2, GvtPosix.SIG_IGN);
+        var old_usr2 = GhosttyGtkPosix.signal (Posix.Signal.USR2, GhosttyGtkPosix.SIG_IGN);
         var stray = Posix.open ("/dev/null", Posix.O_RDONLY);
         assert_cmpint (stray, CompareOperator.GT, 2);
 
@@ -276,7 +276,7 @@ static void test_child_clean_slate () {
         run.wait_for_exit ();
 
         Posix.close (stray);
-        GvtPosix.signal (Posix.Signal.USR2, old_usr2);
+        GhosttyGtkPosix.signal (Posix.Signal.USR2, old_usr2);
         Posix.sigprocmask (Posix.SIG_SETMASK, old, out ignored);
 
         assert_true (run.text.contains ("SigBlk:\t0000000000000000"));

@@ -18,7 +18,7 @@
  * Rows: as in VTE, a row keeps its number for as long as it exists, however
  * much scrollback is pruned above it (Engine.row_base).
  */
-namespace Gvt {
+namespace GhosttyGtk {
     public class Terminal : Gtk.Widget, Gtk.Scrollable {
         private const int HOLD_TIMEOUT_MS = 1000;
         private const string DEFAULT_FONT = "Monospace 10";
@@ -81,7 +81,7 @@ namespace Gvt {
         public bool enable_fallback_scrolling { get; set; default = true; }
         /* Stored only: the vadjustment always counts rows. */
         public bool scroll_unit_is_pixels { get; set; default = false; }
-        /* Stored only: VTE draws OSC 8 hyperlinks when this is set, and gvt
+        /* Stored only: VTE draws OSC 8 hyperlinks when this is set, and libghostty-gtk
          * draws none. elementary uses it as its own Ctrl+click flag. */
         public bool allow_hyperlink { get; set; default = false; }
 
@@ -231,14 +231,14 @@ namespace Gvt {
                 }
                 // The child starts at the current size, before the program
                 // can ask for it.
-                var ws = GvtPosix.WinSize () {
+                var ws = GhosttyGtkPosix.WinSize () {
                     ws_col = engine.cols, ws_row = engine.rows,
                     ws_xpixel = (uint16) (engine.cols * get_char_width ()),
                     ws_ypixel = (uint16) (engine.rows * get_char_height ())
                 };
                 SpawnChildSetupFunc? setup = (owned) child_setup;
                 var spawned = Pty.spawn (working_directory, argv, envv, spawn_flags, () => {
-                    GvtPosix.ioctl_winsize (0, GvtPosix.TIOCSWINSZ, ref ws);
+                    GhosttyGtkPosix.ioctl_winsize (0, GhosttyGtkPosix.TIOCSWINSZ, ref ws);
                     if (setup != null) {
                         setup ();
                     }

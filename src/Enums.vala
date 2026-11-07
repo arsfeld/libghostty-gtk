@@ -2,7 +2,7 @@
  * The public enums, delegate and free function of VTE that elementary uses,
  * with VTE 0.84's names and values.
  */
-namespace Gvt {
+namespace GhosttyGtk {
     public enum CursorShape {
         BLOCK,
         IBEAM,
@@ -14,7 +14,7 @@ namespace Gvt {
         HTML = 2
     }
 
-    /* Accepted for VTE compatibility; gvt's Pty has no use for them. */
+    /* Accepted for VTE compatibility; libghostty-gtk's Pty has no use for them. */
     [Flags]
     public enum PtyFlags {
         NO_LASTLOG,

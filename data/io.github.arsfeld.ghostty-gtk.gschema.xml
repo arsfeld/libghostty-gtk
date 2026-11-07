@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-  <schema id="io.github.arsfeld.gvt" path="/io/github/arsfeld/gvt/">
+  <schema id="io.github.arsfeld.ghostty-gtk" path="/io/github/arsfeld/ghostty-gtk/">
     <key name="clipboard-read" type="b">
       <default>false</default>
       <summary>Let programs read the clipboard (OSC 52)</summary>

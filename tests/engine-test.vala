@@ -1,11 +1,11 @@
 // Engine against known byte streams. Compiled together with src/Engine.vala,
 // because Engine is internal to the library.
 
-static Gvt.Engine make (uint16 cols = 80, uint16 rows = 24) {
-    return new Gvt.Engine (cols, rows);
+static GhosttyGtk.Engine make (uint16 cols = 80, uint16 rows = 24) {
+    return new GhosttyGtk.Engine (cols, rows);
 }
 
-static void feed (Gvt.Engine engine, string s) {
+static void feed (GhosttyGtk.Engine engine, string s) {
     engine.write (s.data);
 }
 
@@ -107,7 +107,7 @@ static void test_osc52_read_not_granted () {
 /* A handler that drops the last reference must not free the terminal in
  * the middle of its own vt_write. */
 static void test_drop_in_handler () {
-    Gvt.Engine? engine = make ();
+    GhosttyGtk.Engine? engine = make ();
     bool finalized = false;
     engine.weak_ref (() => finalized = true);
     int titles = 0;

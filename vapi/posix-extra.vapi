@@ -1,6 +1,6 @@
 /* The few POSIX/Linux calls Pty needs that posix.vapi lacks. */
 [CCode (cheader_filename = "pty.h,sys/ioctl.h,termios.h,unistd.h,fcntl.h")]
-namespace GvtPosix {
+namespace GhosttyGtkPosix {
     [CCode (cname = "struct winsize", has_type_id = false)]
     public struct WinSize {
         public uint16 ws_row;

@@ -31,8 +31,8 @@ namespace TestUtil {
     }
 
     /* A terminal with the fonts.conf monospace, so cell metrics are stable. */
-    public Gvt.Terminal new_terminal () {
-        var t = new Gvt.Terminal ();
+    public GhosttyGtk.Terminal new_terminal () {
+        var t = new GhosttyGtk.Terminal ();
         t.set_font (Pango.FontDescription.from_string ("DejaVu Sans Mono 10"));
         return t;
     }
@@ -45,7 +45,7 @@ namespace TestUtil {
     }
 
     /* Shows `t` in a window and waits until it has been drawn. */
-    public Gtk.Window present (Gvt.Terminal t) {
+    public Gtk.Window present (GhosttyGtk.Terminal t) {
         var window = new Gtk.Window ();
         window.child = t;
         window.present ();
@@ -55,11 +55,11 @@ namespace TestUtil {
     }
 
     /* Spawns argv, asserts the spawn worked and returns the pid. */
-    public Pid spawn (Gvt.Terminal t, string[] argv) {
+    public Pid spawn (GhosttyGtk.Terminal t, string[] argv) {
         Pid result = 0;
         Error? failure = null;
         bool done = false;
-        t.spawn_async (Gvt.PtyFlags.DEFAULT, null, argv, null, SpawnFlags.SEARCH_PATH,
+        t.spawn_async (GhosttyGtk.PtyFlags.DEFAULT, null, argv, null, SpawnFlags.SEARCH_PATH,
                        null, -1, null, (term, pid, error) => {
             result = pid;
             failure = error;

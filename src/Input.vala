@@ -23,7 +23,7 @@
  *
  * Every byte goes out through send (), which emits `sent`.
  */
-namespace Gvt {
+namespace GhosttyGtk {
     internal enum PointerPhase { PRESS, DRAG, RELEASE }
 
     /* An input method that can filter a key given by its fields. Only

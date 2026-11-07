@@ -1,7 +1,7 @@
 /*
  * Engine: the terminal state, on libghostty-vt.
  *
- * This is the only code in gvt that calls the libghostty C API
+ * This is the only code in libghostty-gtk that calls the libghostty C API
  * (vapi/libghostty-vt.vapi). Everything else talks to an Engine: it feeds
  * the child's output in with write (), reads state back through the
  * properties and text_range (), and hears about terminal effects through the
@@ -10,7 +10,7 @@
  * Rows are absolute ("screen" rows): row 0 is the oldest scrollback row, and
  * the active screen starts at scrollback_rows.
  */
-namespace Gvt {
+namespace GhosttyGtk {
     /* Answers a clipboard read. Call it with the clipboard text, or null to
      * refuse, before the clipboard_read_requested handler returns: libghostty
      * takes the answer synchronously, and a later call is ignored. */

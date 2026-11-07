@@ -3,7 +3,7 @@
 // check_match_at), with VTE's names, as elementary calls them.
 
 /* A terminal allocated to cols x rows cells, not in a window. */
-static Gvt.Terminal sized (int cols, int rows) {
+static GhosttyGtk.Terminal sized (int cols, int rows) {
     var t = TestUtil.new_terminal ();
     TestUtil.measure (t);
     var cw = (int) t.get_char_width ();
@@ -14,11 +14,11 @@ static Gvt.Terminal sized (int cols, int rows) {
 }
 
 /* "alpha" twice, in two cases, around a line without it. */
-static Gvt.Terminal alphas () {
+static GhosttyGtk.Terminal alphas () {
     var t = TestUtil.new_terminal ();
     t.process_output ("alpha\r\nbeta\r\nALPHA".data);
     try {
-        t.search_set_regex (new Gvt.Regex.for_search ("alpha", -1, 0), 0);
+        t.search_set_regex (new GhosttyGtk.Regex.for_search ("alpha", -1, 0), 0);
     } catch (Error e) {
         assert_no_error (e);
     }
@@ -64,7 +64,7 @@ static void test_scrollback () {
     t.process_output (output.str.data);
     assert_true (TestUtil.wait_until (() => t.vadjustment.value > 0, 5));
     try {
-        t.search_set_regex (new Gvt.Regex.for_search ("needle", -1, 0), 0);
+        t.search_set_regex (new GhosttyGtk.Regex.for_search ("needle", -1, 0), 0);
     } catch (Error e) {
         assert_no_error (e);
     }
@@ -79,7 +79,7 @@ static void test_url () {
     var t = TestUtil.new_terminal ();
     int tag = -1;
     try {
-        tag = t.match_add_regex (new Gvt.Regex.for_match ("https?://[^ ]+", -1, 0), 0);
+        tag = t.match_add_regex (new GhosttyGtk.Regex.for_match ("https?://[^ ]+", -1, 0), 0);
     } catch (Error e) {
         assert_no_error (e);
     }
@@ -112,7 +112,7 @@ static void test_url () {
 static void test_url_wrapped () {
     var t = TestUtil.new_terminal ();
     try {
-        t.match_add_regex (new Gvt.Regex.for_match ("https?://[^ ]+", -1, 0), 0);
+        t.match_add_regex (new GhosttyGtk.Regex.for_match ("https?://[^ ]+", -1, 0), 0);
     } catch (Error e) {
         assert_no_error (e);
     }
@@ -129,7 +129,7 @@ static void test_url_wrapped () {
 
 static void test_bad_regex () {
     try {
-        new Gvt.Regex.for_match ("(", -1, 0);
+        new GhosttyGtk.Regex.for_match ("(", -1, 0);
         assert_not_reached ();
     } catch (Error e) {
         assert_true (e is RegexError);

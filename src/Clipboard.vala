@@ -8,16 +8,16 @@
  * Gdk.Clipboard can only be read asynchronously. So a copy of the display
  * clipboard's text is kept and reads are answered from it. The copy is
  * refreshed whenever the clipboard changes, but only while the
- * io.github.arsfeld.gvt key clipboard-read is true (off by default, and then
+ * io.github.arsfeld.ghostty-gtk key clipboard-read is true (off by default, and then
  * nothing is read); text the user pastes is kept too. A read the user
  * already granted (the follow-up of a Kitty paste event) is always answered;
  * a plain OSC 52 read only when clipboard-read is true. Otherwise, or when
  * the schema is not installed, the program is refused and libghostty tells it
  * the clipboard is empty. Only text is offered.
  */
-namespace Gvt {
+namespace GhosttyGtk {
     internal class Clipboard : Object {
-        private const string SCHEMA = "io.github.arsfeld.gvt";
+        private const string SCHEMA = "io.github.arsfeld.ghostty-gtk";
         private const string KEY = "clipboard-read";
 
         private Gdk.Clipboard display_clipboard;

@@ -16,7 +16,7 @@
  * the whole scrollback has been seen. The found match becomes the
  * terminal's selection, and libghostty scrolls it into view.
  */
-namespace Gvt {
+namespace GhosttyGtk {
     internal class Search : Object {
         /* How long one idle dispatch may search for. */
         private const int64 SLICE_US = 2000;

@@ -1,10 +1,10 @@
-// Selection and the clipboard: Gvt.Terminal's VTE selection API, the mouse
+// Selection and the clipboard: GhosttyGtk.Terminal's VTE selection API, the mouse
 // selection path through Input, and OSC 52 against the display clipboard.
 // Runs with GSETTINGS_BACKEND=memory, so clipboard-read can be flipped here.
 
 /* Overrides the action signals as elementary does, which also checks the
  * pattern compiles against Terminal's declaration. */
-class CopyCounting : Gvt.Terminal {
+class CopyCounting : GhosttyGtk.Terminal {
     public int copies = 0;
     public int pastes = 0;
 
@@ -36,7 +36,7 @@ static string? clipboard_text (Gdk.Clipboard clipboard) {
 }
 
 /* A terminal allocated to cols x rows cells, not in a window. */
-static Gvt.Terminal sized (int cols, int rows) {
+static GhosttyGtk.Terminal sized (int cols, int rows) {
     var t = TestUtil.new_terminal ();
     TestUtil.measure (t);
     var cw = (int) t.get_char_width ();
@@ -105,7 +105,7 @@ static void test_changed () {
 class Replies : Object {
     public StringBuilder bytes = new StringBuilder ();
 
-    public Replies (Gvt.Terminal t) {
+    public Replies (GhosttyGtk.Terminal t) {
         t.engine.write_pty.connect ((b) => bytes.append_len ((string) b, b.length));
     }
 }
@@ -117,7 +117,7 @@ static void test_osc52_write () {
 }
 
 /* Puts text on the display clipboard and waits until it reads back. */
-static void set_clipboard (Gvt.Terminal t, string text) {
+static void set_clipboard (GhosttyGtk.Terminal t, string text) {
     t.get_clipboard ().set_text (text);
     assert_cmpstr (clipboard_text (t.get_clipboard ()), CompareOperator.EQ, text);
 }
@@ -138,7 +138,7 @@ static void test_osc52_read_off () {
 
 /* Turning reads on picks up what is already on the clipboard. */
 static void test_osc52_read_enabled_later () {
-    var settings = new Settings ("io.github.arsfeld.gvt");
+    var settings = new Settings ("io.github.arsfeld.ghostty-gtk");
     var t = TestUtil.new_terminal ();
     set_clipboard (t, "later");
     settings.set_boolean ("clipboard-read", true);
@@ -147,7 +147,7 @@ static void test_osc52_read_enabled_later () {
 }
 
 static void test_osc52_read_on () {
-    var settings = new Settings ("io.github.arsfeld.gvt");
+    var settings = new Settings ("io.github.arsfeld.ghostty-gtk");
     settings.set_boolean ("clipboard-read", true);
     var t = TestUtil.new_terminal ();
     set_clipboard (t, "secret");
@@ -168,7 +168,7 @@ static void test_paste () {
     assert_cmpint (t.pastes, CompareOperator.EQ, 1);
     assert_true (TestUtil.wait_until (() => {
         size_t len;
-        return t.get_text_range_format (Gvt.Format.TEXT, 0, 0, 0, 2, out len) == "ls";
+        return t.get_text_range_format (GhosttyGtk.Format.TEXT, 0, 0, 0, 2, out len) == "ls";
     }, 5));
     window.destroy ();
 }
@@ -177,7 +177,7 @@ static void test_paste () {
 class Sent : Object {
     public StringBuilder bytes = new StringBuilder ();
 
-    public Sent (Gvt.Terminal t) {
+    public Sent (GhosttyGtk.Terminal t) {
         t.input.sent.connect ((b) => bytes.append_len ((string) b, b.length));
     }
 }

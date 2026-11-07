@@ -15,7 +15,7 @@
  * Engine.selection_text () gives: soft-wrapped rows joined, hard line breaks
  * as "\n", trailing blanks trimmed, as in VTE.
  */
-namespace Gvt {
+namespace GhosttyGtk {
     internal class Selection : Object {
         private unowned Terminal terminal;
 

@@ -18,7 +18,7 @@
  * are laid out alone and centred in their own cells. Either way a glyph
  * from a fallback font can never push the cells after it off the grid.
  */
-namespace Gvt {
+namespace GhosttyGtk {
     internal class Renderer : Object {
         private const string DEFAULT_FONT = "Monospace 10";
 

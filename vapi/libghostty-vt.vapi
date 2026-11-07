@@ -508,7 +508,7 @@ namespace GhosttyVt {
     }
 
     /* ---- Render state (render.h) ----
-     * Only the struct fields gvt reads are bound; the C header defines the
+     * Only the struct fields libghostty-gtk reads are bound; the C header defines the
      * real layout, so sizeof () is right. */
 
     [CCode (cname = "GhosttyRenderStateDirty", cprefix = "GHOSTTY_RENDER_STATE_DIRTY_", has_type_id = false)]
