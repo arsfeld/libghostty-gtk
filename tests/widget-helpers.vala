@@ -47,6 +47,9 @@ namespace TestUtil {
     /* Shows `t` in a window and waits until it has been drawn. */
     public Gtk.Window present (GhosttyGtk.Terminal t) {
         var window = new Gtk.Window ();
+        /* No title bar: its width follows the desktop's UI font, and in a
+         * window narrower than it the terminal gets more than its 80x24. */
+        window.decorated = false;
         window.child = t;
         window.present ();
         assert_true (wait_until (() => t.get_mapped () && t.renderer.frames > 0));
