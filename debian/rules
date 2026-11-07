@@ -1,0 +1,17 @@
+#!/usr/bin/make -f
+# libghostty-vt is not in any distribution yet: build it first with
+# ci/build-libghostty-vt.sh and put its prefix on PKG_CONFIG_PATH
+# (debian/README.source).
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@ --buildsystem=meson
+
+override_dh_auto_configure:
+	dh_auto_configure -- -Dghostty_static=true
+
+override_dh_auto_test:
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+	debian/run-tests
+endif

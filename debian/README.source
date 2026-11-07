@@ -1,0 +1,9 @@
+libghostty-gtk links libghostty-vt 1.0 statically, and no distribution ships
+libghostty-vt 1.0 yet. So this source package does not build from itself:
+first run ci/build-libghostty-vt.sh, which downloads Zig 0.17.0 and the
+libghostty-vt 1.0.0 release (all pinned by sha256) and installs it to
+/opt/libghostty-vt, then build with
+
+  PKG_CONFIG_PATH=/opt/libghostty-vt/lib/pkgconfig dpkg-buildpackage -b
+
+.github/workflows/ci.yml does exactly this.

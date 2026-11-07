@@ -1,0 +1,35 @@
+#!/bin/sh
+# Runs the meson tests against a headless Weston, as the NixOS package does:
+# every test gets a Wayland display, including those that need none, so a
+# test that grows a widget later needs no change here.
+set -eu
+
+builddir=$(ls -d obj-*)
+runtime=$(mktemp -d)
+trap 'kill "$weston" 2>/dev/null || true; rm -rf "$runtime"' EXIT
+export XDG_RUNTIME_DIR="$runtime" XDG_CACHE_HOME="$runtime/cache" HOME="$runtime"
+chmod 0700 "$runtime"
+
+# One known monospace font, so the widget tests' cell metrics are stable.
+cat > "$runtime/fonts.conf" <<CONF
+<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+  <dir>/usr/share/fonts/truetype/dejavu</dir>
+  <cachedir>$runtime/fontconfig</cachedir>
+</fontconfig>
+CONF
+export FONTCONFIG_FILE="$runtime/fonts.conf"
+
+weston --backend=headless --socket=ghostty-gtk-test --idle-time=0 &
+weston=$!
+export WAYLAND_DISPLAY=ghostty-gtk-test
+i=0
+while [ ! -S "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY" ]; do
+  i=$((i + 1))
+  [ "$i" -le 100 ] || { echo "weston did not start" >&2; exit 1; }
+  sleep 0.1
+done
+
+export GSETTINGS_SCHEMA_DIR="$PWD/$builddir/data"
+meson test -C "$builddir" --print-errorlogs --verbose

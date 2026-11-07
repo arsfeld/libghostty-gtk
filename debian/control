@@ -1,0 +1,47 @@
+Source: libghostty-gtk
+Section: libs
+Priority: optional
+Maintainer: Alexandre Rosenfeld <alex@rosenfeld.one>
+Build-Depends: debhelper-compat (= 13),
+               fonts-dejavu-core,
+               libglib2.0-dev,
+               libglib2.0-bin,
+               libgtk-4-dev,
+               libpango1.0-dev,
+               meson (>= 1.0),
+               pkgconf,
+               valac,
+               weston
+Standards-Version: 4.6.2
+Homepage: https://github.com/arsfeld/libghostty-gtk
+Vcs-Git: https://github.com/arsfeld/libghostty-gtk.git
+Vcs-Browser: https://github.com/arsfeld/libghostty-gtk
+Rules-Requires-Root: no
+
+Package: libghostty-gtk-1-0
+Architecture: any
+Multi-Arch: same
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: GTK4 terminal widget on Ghostty's terminal engine
+ libghostty-gtk is a GTK4 terminal widget on libghostty-vt, Ghostty's
+ terminal engine, with the part of VTE's Vte.Terminal API that elementary
+ Terminal uses. libghostty-vt is linked in statically.
+ .
+ This package contains the shared library and its GSettings schema.
+
+Package: libghostty-gtk-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: libghostty-gtk-1-0 (= ${binary:Version}),
+         libglib2.0-dev,
+         libgtk-4-dev,
+         libpango1.0-dev,
+         ${misc:Depends}
+Description: GTK4 terminal widget on Ghostty's terminal engine - development files
+ libghostty-gtk is a GTK4 terminal widget on libghostty-vt, Ghostty's
+ terminal engine, with the part of VTE's Vte.Terminal API that elementary
+ Terminal uses.
+ .
+ This package contains the header, the Vala API and the pkg-config file
+ (ghostty-gtk-1).
