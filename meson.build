@@ -15,7 +15,19 @@ gtk_dep = dependency('gtk4')
 pango_dep = dependency('pango')
 # Meson passes valac `--pkg libghostty-vt`, which finds the handwritten
 # binding vapi/libghostty-vt.vapi through --vapidir.
-ghostty_dep = dependency('libghostty-vt')
+if get_option('ghostty_static')
+  # The static .pc is named libghostty-vt-static, and Meson would pass that
+  # name to valac, which has no binding by it. So take the paths from the .pc
+  # and name the binding here.
+  ghostty_static = dependency('libghostty-vt-static')
+  ghostty_dep = declare_dependency(
+    compile_args: ['-I' + ghostty_static.get_variable(pkgconfig: 'includedir')],
+    link_args: [ghostty_static.get_variable(pkgconfig: 'libdir') / 'libghostty-vt.a'],
+  )
+  add_project_arguments(['--pkg', 'libghostty-vt'], language: 'vala')
+else
+  ghostty_dep = dependency('libghostty-vt')
+endif
 
 # Math.round () and friends.
 m_dep = meson.get_compiler('c').find_library('m', required: false)
@@ -58,7 +70,9 @@ import('pkgconfig').generate(
   description: 'GTK4 terminal widget on libghostty-vt',
   subdirs: ghostty_gtk_name,
   requires: ['glib-2.0', 'gobject-2.0', 'gio-2.0', 'gtk4', 'pango'],
-  requires_private: ['libghostty-vt'],
+  # Linked statically, libghostty-vt is inside the library, and a consumer
+  # has no libghostty-vt.pc for pkg-config to find.
+  requires_private: get_option('ghostty_static') ? [] : ['libghostty-vt'],
 )
 
 subdir('data')

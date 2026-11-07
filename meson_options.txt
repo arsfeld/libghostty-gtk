@@ -1,1 +1,3 @@
 option('tests', type: 'boolean', value: true, description: 'Build the unit tests')
+option('ghostty_static', type: 'boolean', value: false,
+       description: 'Link libghostty-vt statically (libghostty-vt-static.pc), for distributions that do not ship it')
