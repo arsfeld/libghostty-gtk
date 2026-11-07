@@ -11,10 +11,11 @@ apt-get install -y -qq --no-install-recommends \
 [ -f /opt/libghostty-vt/lib/libghostty-vt.a ] || ci/build-libghostty-vt.sh
 export PKG_CONFIG_PATH=/opt/libghostty-vt/lib/pkgconfig
 
-# Each build's version sorts after the last (commit time in UTC, to the second): upstream version, commit date,
+# Each build's version sorts after the last: upstream version, commit date,
 # commit.
 upstream=$(sed -n "s/^project('libghostty-gtk'.*[ (,]version: '\([^']*\)'.*/\1/p" meson.build | head -n1)
-date=$(git log -1 --format=%cd --date=format-local:%Y%m%d%H%M%S)
+# Commit time in UTC to the second: same-day builds must not sort by hash.
+date=$(TZ=UTC git log -1 --format=%cd --date=format-local:%Y%m%d%H%M%S)
 sha=$(git rev-parse --short=8 HEAD)
 version="$upstream+git$date.$sha"
 DEBEMAIL="alex@rosenfeld.one" DEBFULLNAME="Alexandre Rosenfeld" \
