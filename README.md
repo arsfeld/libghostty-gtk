@@ -13,7 +13,7 @@ provides parsing and terminal state only.
 ## Installing
 
 On elementary OS 8, `libghostty-gtk-1-0` and `libghostty-gtk-dev` are in the
-signed apt repo at [arsfeld.github.io/apt](https://arsfeld.github.io/apt),
+signed apt repo at [arsfeld.github.io/pantheon-apt](https://arsfeld.github.io/pantheon-apt),
 built by this repo's CI on every push to `master`. Those packages link
 libghostty-vt statically, so nothing else is needed.
 
